@@ -1,7 +1,28 @@
-.App {
+/* .site-layout-content {
+  min-height: 180px;
+  padding: 24px;
+}
+#components-layout-demo-top .logo {
+  float: left;
+  width: 120px;
+  height: 31px;
+  margin: 16px 24px 16px 0;
+  background: rgba(171, 28, 28, 0.3);
+}
+.ant-row-rtl #components-layout-demo-top .logo {
+  float: right;
+  margin: 16px 0 16px 24px;
+} */
+
+
+/* .App {
   text-align: center;
 }
 
+.title{
+  color:aliceblue;
+} */
+/* 
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -35,4 +56,4 @@
   to {
     transform: rotate(360deg);
   }
-}
+} */

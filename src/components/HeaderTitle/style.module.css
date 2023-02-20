@@ -1,0 +1,42 @@
+.site_layout_content {
+    min-height: 280px;
+    padding: 24px;
+  }
+  .ant{ 
+    height: 100vh;
+    background-color:#f50;
+}
+  #components-layout-demo-top .logo {
+    float: left;
+    width: 120px;
+    height: 31px;
+    margin: 16px 24px 16px 0;
+    background: rgba(246, 243, 243, 0.3);
+  }
+  .ant-row-rtl #components-layout-demo-top .logo {
+    float: right;
+    margin: 16px 0 16px 24px;
+  }
+
+.flex{
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  /* height: 65px; */
+  line-height: 32px;
+  padding-inline: 10px;
+  justify-content: flex-end;
+
+  
+}
+
+.flexItem {
+  /* display: block; */
+  /* align-items: center;
+  gap: 10px;
+  flex-flow: column;
+  height: 0px; */
+
+}
