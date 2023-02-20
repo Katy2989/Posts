@@ -5,7 +5,6 @@ import './style.css';
 import { List, Card} from 'antd';
 
 const PostList=({data, currentUser, handlePostLike, handlePostDelete})=>{
-  // console.log({data});
      
     return(
         <div className="cards">
@@ -14,9 +13,7 @@ const PostList=({data, currentUser, handlePostLike, handlePostDelete})=>{
              onPostLike={handlePostLike}
              onPostDelete={handlePostDelete}
              />))}
-        </div>
-
-    
+        </div> 
          )
     
 }
