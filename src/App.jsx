@@ -4,12 +4,18 @@ import { Layout, Space } from 'antd';
 import HeaderTitle from "./components/HeaderTitle/Header";
 import FooterPage from './components/FooterPage/FooterPage';
 import api from './Untils/api';
-import PostListPage from './components/PostListPage/PostListPage';
+
 import PaginationPost from './components/PaginationPost/PaginationPost';
 import BreadcrumbPost from './components/BreadcrumbPost/BreadcrumbPost';
-import Search from 'antd/es/transfer/search';
-import useDebounce from './assets/Hooks/useDebounce';
+// import Search from 'antd/es/transfer/search';
+import useDebounce from './Untils/Hooks/useDebounce';
 import { CreatePostButton } from './components/CreatePostButton/CreatePostButton';
+import { Navigate, Route, Routes } from 'react-router-dom';
+import { NotFoundPage } from './Pages/NotFoundPages/NotFoundPages';
+import Search from './components/Search/Search';
+import { PostCardPages } from './Pages/PostCardPages/PostCardPages';
+import { PostListPage } from './Pages/PostListPages/PostListPages';
+import { UserContext } from './Untils/UserContext/userContext';
 
 const { Footer, Content } = Layout;
 
@@ -19,7 +25,7 @@ function App() {
   const [page, setPage] = useState(1);
   const [pageLimit, setPageLimit] = useState(550);
   const [searchQuery, setSearchQuery] = useState("");
-  const [result, setResult] = useState("");
+  const [totalQuery, setTotalQuery] = useState(0);
   const [currentUser, setCurrentUser] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
@@ -29,21 +35,27 @@ function App() {
     Promise.all([api.getPostList(page, pageLimit), api.getUserInfo()]).then(([postData, userData]) => {
       setPosts(postData.posts);
       setCurrentUser(userData);
+      setTotalQuery(postData.total);
+
     });
   }, [page, pageLimit]);
 
   const handleRequest = () => {
     api.search(searchQuery, page, pageLimit).then((data) => setPosts(data.posts));
+    console.log(searchQuery, posts, "posts");
   };
 
   const handleCreatePost = (values) => {
     values = {
       ...values,
-      tags: values.tags?.split(",").map((tag) =>tag.trim()),
+      tags: values.tags?.split(",").map((tag) => tag.trim()),
     };
     console.log(values, 1);
-    api.addPost(values).then((newData) =>
-      setPosts((prevState) => [...prevState, newData])).catch((err) => console.log(err));
+    api.addPost(values).then((newData) => {
+      const newPost = [newData].concat(posts);
+      setPosts(newPost);
+    });
+    // [...prevState, newData]
 
     setShowModal(false);
   };
@@ -56,11 +68,12 @@ function App() {
   const handleFormSubmit = (e) => {
     e.preventDefault();
     handleRequest();
+    console.log("click");
   };
 
   const handleInput = (inputValue) => {
     setSearchQuery(inputValue);
-    console.log("input", inputValue);
+    // console.log("input", inputValue);
 
   };
 
@@ -84,44 +97,83 @@ function App() {
     }).catch((err) => console.log(err));
   }
 
-    return (
-      <Layout>
+  return (
+    <UserContext.Provider value={currentUser}>
+    <Layout>
 
-        <HeaderTitle {...currentUser} />
-        <Content style={{ padding: "0 100px" }}>
-          <BreadcrumbPost onSubmit={handleFormSubmit}
-            onInput={handleInput} >
+      <HeaderTitle {...currentUser} />
 
-          </BreadcrumbPost>
-          <CreatePostButton
-            handleCreatePost={handleCreatePost}
-            showModal={showModal}
-            setShowModal={setShowModal} />
+      <Content style={{ padding: "0 100px" }}>
+        <Routes>
+          <Route
+            path='/'
+            element={
+              <>
+                <BreadcrumbPost  >
+                
+                <Search onSubmit={handleFormSubmit} onInput={handleInput} />
+                
+                </BreadcrumbPost>
 
-          <Space
-            direction="vertical"
-            size="middle"
-            style={{
+                <CreatePostButton
+                  handleCreatePost={handleCreatePost}
+                  showModal={showModal}
+                  setShowModal={setShowModal} />
+              {/* </>
+            } />
 
-            }}>
+          </Routes>
 
-            <PostListPage data={posts}
-              currentUser={currentUser}
-              handlePostLike={handlePostLike}
-              handlePostDelete={handlePostDelete} />
+          <Routes> */}
+{/* 
+          <Route
+            path="/"
+            element={
+              <> */}
+                <Space
+                  direction="vertical"
+                  size="middle"
+                  style={{
 
-            <PaginationPost />
+                  }}>
 
-          </Space>
-        </Content>
+                  <PostListPage goods={posts}
+                    currentUser={currentUser}
+                    handlePostLike={handlePostLike}
+                    handlePostDelete={handlePostDelete} />
 
-        <Footer style={{ padding: "12px 50px", }}>
+                  <PaginationPost />
 
-          <FooterPage />
-        </Footer>
-      </Layout>
+                </Space>
+              </>
+            }
+            
+          />
 
-    );
-  }
+          <Route
+                path='/posts/:postID'
+                element={<PostCardPages 
+                handlePostLike={handlePostLike}
+                currentUser = {currentUser}
+                setCurrentUser = {setCurrentUser}/>}
+              ></Route>
+          <Route
+            path="*"
+            element={<NotFoundPage style={{ textAlign: "center" }} />}
+          />
+        </Routes>
+      </Content>
 
-  export default App;
+
+
+      <Footer style={{ padding: "12px 50px", }}>
+
+        <FooterPage />
+      </Footer>
+    </Layout>
+    </UserContext.Provider>
+
+  );
+}
+
+export default App;
