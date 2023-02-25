@@ -60,6 +60,14 @@ class Api {
     }).then(onResponse);
   }
 
+  getPostById(postID) {
+    return fetch(`${this._baseUrl}/posts/${postID}`, {
+      headers: {
+        authorization: this._token,
+      },
+    }).then(onResponse);
+  }
+
   changeLikePost(postId, isLike) {
     return fetch(`${this._baseUrl}/posts/likes/${postId}`, {
       method: isLike ? "DELETE" : "PUT",

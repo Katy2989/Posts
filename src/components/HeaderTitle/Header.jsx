@@ -2,7 +2,7 @@
 import 'antd/dist/reset.css';
 import s from "./style.module.css";
 import { Layout, Row, Col, Menu, theme, Card, Space, Avatar, Button, Typography } from 'antd';
-import PostList from '../PostListPage/PostListPage';
+import PostList from '../PostList/PostList';
 import BreadcrumbPost from '../BreadcrumbPost/BreadcrumbPost';
 const { Header, Content } = Layout;
 const { Text, Title, Paragraph } = Typography;

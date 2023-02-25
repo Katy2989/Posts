@@ -4,8 +4,9 @@ import Icon, { UserOutlined, HomeOutlined, ExclamationCircleOutlined, MessageOut
 import "./style.css";
 import { ReactComponent as Save } from "./save.svg";
 import cn from 'classnames';
-import Post from "../Post/Post";
+// import Post from "../PostPages/PostPages";
 import { format } from 'date-fns';
+import { Link } from "react-router-dom";
 const { confirm } = Modal;
 const { Meta } = Card;
 
@@ -18,7 +19,7 @@ const PostCard = ({ title, image, text, tags, onPostLike, onPostDelete, updated_
   const isCurrentUser = author_id === currentUser?._id;
 
   const [modal, contextHolder] = Modal.useModal();
- 
+  const textHTML = { __html: text };
   function handleLikeClick() {
     onPostLike({ _id, likes });
   }
@@ -36,14 +37,19 @@ const PostCard = ({ title, image, text, tags, onPostLike, onPostDelete, updated_
           <span className="card__ava">{name}</span>
         </Space>
       </div>
+      <Link to={`/posts/${_id}`} className="card__link">
       <div className="card__content">
+
         <img className="card__img" alt="example" src={image} />
+
+
         <div className="card__text"><h3>{title}</h3>
-          <p>{text}</p></div>
+          <p className="subtitle" dangerouslySetInnerHTML={textHTML}></p></div>
       </div>
       <Space style={{ padding: "0 20px", marginBottom: "5px" }} size={[0, 8]} wrap>
         {tags?.map((item, index) => <Tag color="#87d068" key={index}> {item}</Tag>)}
       </Space>
+      </Link>
       <div className="card__footer">
         <button
           className={cn('card__favorite', {
@@ -53,9 +59,10 @@ const PostCard = ({ title, image, text, tags, onPostLike, onPostDelete, updated_
           <Save className='card__favorite-icon' /> {likes.length}
         </button>
         {!!comments.length && <div> <MessageOutlined /> {comments.length}</div>}
-        {isCurrentUser ? (<div className="card__delete"><DeleteOutlined onClick={handleDeleteClick} /></div>) : (<div></div>)}
+        {isCurrentUser ? (<div className="card__delete"><DeleteOutlined onClick={handleDeleteClick} /></div>) : null}
         <div>создано {dataFormat}</div>
       </div>
+      
     </div>
   );
 }
