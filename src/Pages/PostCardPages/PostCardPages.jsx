@@ -15,9 +15,6 @@ import api from '../../Untils/api';
 // import { UserContext } from '../../context/userContext';
 
 
-
-// const productId = '622c77e877d63f6e70967d22';
-
 export const PostCardPages = ({ handlePostLike, setCurrentUser, currentUser }) => {
 
     const [isLoading, setIsLoading] = useState(false);
@@ -29,8 +26,8 @@ export const PostCardPages = ({ handlePostLike, setCurrentUser, currentUser }) =
    console.log(postID);
    
   useEffect(() => {
-    setIsLoading(true);
-    api.getUserInfo().then((userData) => setCurrentUser(userData));
+      setIsLoading(true);
+      
     api
       .getPostById(postID)
       .then((postData) => setPosts(postData))

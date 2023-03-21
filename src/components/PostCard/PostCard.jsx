@@ -29,6 +29,7 @@ const PostCard = ({ title, image, text, tags, onPostLike, onPostDelete, updated_
       onPostDelete(_id);
     }
   }
+  
   return (
     <div className="card__white">
       <div className="card__title">

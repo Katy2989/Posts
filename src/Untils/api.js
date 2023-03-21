@@ -29,6 +29,17 @@ class Api {
       }).then(onResponse);
   }
 
+  changeLogin(avatar) { 
+    console.log(avatar, "avatar");  
+    return fetch(`${this._baseUrl}/users/me/avatar`, {
+      method: "PATCH",
+      headers: {
+        authorization: this._token,
+        "Content-type": "application/json",
+      },
+     body: JSON.stringify(avatar),
+    }).then(onResponse);
+  }
   deletePost(postId) {
     return fetch(`${this._baseUrl}/posts/${postId}`, {
       method: "DELETE",
