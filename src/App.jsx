@@ -16,6 +16,9 @@ import Search from './components/Search/Search';
 import { PostCardPages } from './Pages/PostCardPages/PostCardPages';
 import { PostListPage } from './Pages/PostListPages/PostListPages';
 import { UserContext } from './Untils/UserContext/userContext';
+import { CardContext } from './Untils/cardContext/cardContext';
+import { Favorite } from './Pages/Favorite/Favorite';
+import { isLiked } from './Untils/utils';
 
 const { Footer, Content } = Layout;
 
@@ -28,7 +31,7 @@ function App() {
   const [totalQuery, setTotalQuery] = useState(0);
   const [currentUser, setCurrentUser] = useState(null);
   const [showModal, setShowModal] = useState(false);
-
+  const [favorites, setFavorites] = useState([]);
   const debounceSearchQuery = useDebounce(searchQuery, 300);
 
   useEffect(() => {
@@ -36,6 +39,9 @@ function App() {
       setPosts(postData.posts);
       setCurrentUser(userData);
       setTotalQuery(postData.total);
+      const favProducts = postData.posts.filter((product) =>
+      isLiked(product.likes, userData._id));
+      setFavorites(favProducts);
 
     });
   }, [page, pageLimit]);
@@ -46,12 +52,12 @@ function App() {
   };
 
   const handleCreatePost = (values) => {
-    values = {
+    const valuesPost = {
       ...values,
       tags: values.tags?.split(",").map((tag) => tag.trim()),
     };
-    console.log(values, 1);
-    api.addPost(values).then((newData) => {
+    console.log(valuesPost, 1);
+    api.addPost(valuesPost).then((newData) => {
       const newPost = [newData].concat(posts);
       setPosts(newPost);
     });
@@ -84,6 +90,14 @@ function App() {
       const newPostsState = posts.map((postState) => {
         return postState._id === newPost._id ? newPost : postState;
       });
+
+      if (!isLiked) {
+        setFavorites((prevState) => [ newPost, ...prevState]);
+      } else
+        setFavorites((prevState) =>
+          prevState.filter((post) => post._id !== newPost._id)
+        );
+
       setPosts(newPostsState);
       console.log(newPostsState, 3);
     });
@@ -96,9 +110,17 @@ function App() {
       setPosts(deleteCard);
     }).catch((err) => console.log(err));
   }
+  const valueProvider = {
+    posts,
+    favorites,
+    handleProductLike: handlePostLike,
+    handlePostDelete: handlePostDelete,
+  };
 
   return (
-    <UserContext.Provider value={currentUser}>
+    <CardContext.Provider value={valueProvider}>
+    <UserContext.Provider value = {{ currentUser, setCurrentUser }}
+    >
     <Layout>
 
       <HeaderTitle {...currentUser} />
@@ -157,6 +179,7 @@ function App() {
                 currentUser = {currentUser}
                 setCurrentUser = {setCurrentUser}/>}
               ></Route>
+              <Route path='/favorites' element={<Favorite />}></Route>
           <Route
             path="*"
             element={<NotFoundPage style={{ textAlign: "center" }} />}
@@ -172,6 +195,7 @@ function App() {
       </Footer>
     </Layout>
     </UserContext.Provider>
+    </CardContext.Provider>
 
   );
 }

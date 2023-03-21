@@ -18,7 +18,7 @@ export const PostPages = ({
   const liked = likes.some((id) => (id === currentUser?._id));
 
   const location = useLocation();
-  console.log({ location });
+  console.log( location, "location" );
 
   const textHTML = { __html: text };
 
@@ -29,7 +29,7 @@ export const PostPages = ({
   };
 
   function handleLikeClick() {
-    // onPostLike({ _id, likes });
+    onPostLike({ _id, likes });
     // console.log({ _id, likes });
  
   }
@@ -47,9 +47,9 @@ export const PostPages = ({
             <div>
               <div className="card__title">
                 <Space size={18} wrap>
-                  <Avatar src={currentUser.avatar} />
+                  <Avatar src={currentUser?.avatar} />
                   <div>
-                    <span className="card__ava">{currentUser.name}</span>
+                    <span className="card__ava">{currentUser?.name}</span>
                   </div>
                 </Space>
               </div>

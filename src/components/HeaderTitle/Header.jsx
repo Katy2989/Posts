@@ -4,27 +4,59 @@ import s from "./style.module.css";
 import { Layout, Row, Col, Menu, theme, Card, Space, Avatar, Button, Typography } from 'antd';
 import PostList from '../PostList/PostList';
 import BreadcrumbPost from '../BreadcrumbPost/BreadcrumbPost';
+import { Link } from 'react-router-dom';
+
+import { useContext, useState } from 'react';
+import { CardContext } from '../../Untils/cardContext/cardContext';
+import { UserContext } from '../../Untils/UserContext/userContext';
+import { ChangeLoginForm } from '../ChangeLoginForm/changeLoginForm';
+import api from '../../Untils/api';
 const { Header, Content } = Layout;
 const { Text, Title, Paragraph } = Typography;
 
+
 const HeaderTitle = ({ avatar, name, email }) => {
-  console.log({ avatar }, "avatar");
-  console.log("12");
-  const {
-    token: { colorBgContainer },
-  } = theme.useToken();
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const { currentUser, setCurrentUser }  = useContext(UserContext);
+
+
+console.log(currentUser, "jjkbhjbj");
+  const onChangeLogin = (value) => {
+     api.changeLogin(value)
+     .then((newUser) => setCurrentUser(newUser)
+ );
+
+    setIsModalOpen(false);
+  };
+
+
   return (
     <Layout >
       <Header style={{ background: "#ffd8b8", lineHeight: "60px", }}>
         <div>
+        <ChangeLoginForm
+              visible={isModalOpen}
+              onChangeLogin={onChangeLogin}
+              image = {currentUser.avatar}
+              onCancel={() => {
+                setIsModalOpen(false);
+              }}
+              
+            />
           <div className={s.flex}>
-            <Avatar size={50} src={avatar} />
+            <Avatar size={50} src={currentUser.avatar} />
             <div>
               <div>{name}</div>
               <div>{email}</div>
             </div>
-            <Button type="primary">Change</Button>
+            <Button type="primary" onClick={() => {
+                setIsModalOpen(true);
+              }}>Change</Button>
+             
           </div>
+       
         </div>
 
       </Header>
