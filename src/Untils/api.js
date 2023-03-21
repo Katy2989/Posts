@@ -40,6 +40,16 @@ class Api {
      body: JSON.stringify(avatar),
     }).then(onResponse);
   }
+  changeName (body) {
+    return fetch(`${this._baseUrl}/users/me`, {
+      method: "PATCH",
+      headers: {
+        authorization: this._token,
+        "Content-type": "application/json",
+      },
+     body: JSON.stringify(body),
+    }).then(onResponse);
+  }
   deletePost(postId) {
     return fetch(`${this._baseUrl}/posts/${postId}`, {
       method: "DELETE",
