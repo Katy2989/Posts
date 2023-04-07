@@ -4,7 +4,7 @@ import PostList from '../../components/PostList/PostList';
 
 
 
-export const PostListPage = ({ handlePostLike, goods, currentUser }) => {
+export const PostListPage = ({ handlePostLike, goods, currentUser, handlePostDelete, setPosts}) => {
   return (
     <>
       <div className='content__cards'>
@@ -12,6 +12,8 @@ export const PostListPage = ({ handlePostLike, goods, currentUser }) => {
           handlePostLike={handlePostLike}
           goods = {goods}
           currentUser={currentUser}
+          handlePostDelete={handlePostDelete}
+          setPosts={setPosts} 
         />
       </div>
     </>

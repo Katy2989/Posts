@@ -1,16 +1,23 @@
 import React from 'react';
 import { Pagination } from 'antd';
 import s from "./style.module.css";
-const PaginationPost = () => {
+const PaginationPost = ( {totalQuery, pageLimit, setPageLimit, page,setPage}) =>{
+  
+  function onShowSizeChange(current, pageSize) {
+    setPageLimit(pageSize);
+}
     return(
     <>
       <Pagination
-        total={85}
+        pageSize={pageLimit}
+        total={totalQuery}
         showTotal={(total) => `Total ${total} items`}
-        defaultPageSize={20}
-        defaultCurrent={1}
+        pageSizeOptions={[3, 5, 10, 15, 20,50, 100]}
         style={{justifyContent:"center"}}
         className={s.pag}
+        onShowSizeChange={onShowSizeChange}   
+        onChange={(num) => setPage(num)}
+        current={page}
       />
     </>);
 };

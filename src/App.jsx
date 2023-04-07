@@ -4,18 +4,19 @@ import { Layout, Space } from 'antd';
 import HeaderTitle from "./components/HeaderTitle/Header";
 import FooterPage from './components/FooterPage/FooterPage';
 import api from './Untils/api';
-
 import PaginationPost from './components/PaginationPost/PaginationPost';
 import BreadcrumbPost from './components/BreadcrumbPost/BreadcrumbPost';
-// import Search from 'antd/es/transfer/search';
 import useDebounce from './Untils/Hooks/useDebounce';
 import { CreatePostButton } from './components/CreatePostButton/CreatePostButton';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes, } from 'react-router-dom';
 import { NotFoundPage } from './Pages/NotFoundPages/NotFoundPages';
 import Search from './components/Search/Search';
 import { PostCardPages } from './Pages/PostCardPages/PostCardPages';
 import { PostListPage } from './Pages/PostListPages/PostListPages';
 import { UserContext } from './Untils/UserContext/userContext';
+import { CardContext } from './Untils/cardContext/cardContext';
+import { Favorite } from './Pages/Favorite/Favorite';
+import { isLiked } from './Untils/utils';
 
 const { Footer, Content } = Layout;
 
@@ -23,12 +24,12 @@ function App() {
 
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(1);
-  const [pageLimit, setPageLimit] = useState(550);
+  const [pageLimit, setPageLimit] = useState(50);
   const [searchQuery, setSearchQuery] = useState("");
   const [totalQuery, setTotalQuery] = useState(0);
   const [currentUser, setCurrentUser] = useState(null);
   const [showModal, setShowModal] = useState(false);
-
+  const [favorites, setFavorites] = useState([]);
   const debounceSearchQuery = useDebounce(searchQuery, 300);
 
   useEffect(() => {
@@ -36,26 +37,26 @@ function App() {
       setPosts(postData.posts);
       setCurrentUser(userData);
       setTotalQuery(postData.total);
+      const favProducts = postData.posts.filter((product) =>
+      isLiked(product.likes, userData._id));
+      setFavorites(favProducts);
 
     });
   }, [page, pageLimit]);
 
   const handleRequest = () => {
     api.search(searchQuery, page, pageLimit).then((data) => setPosts(data.posts));
-    console.log(searchQuery, posts, "posts");
   };
 
   const handleCreatePost = (values) => {
-    values = {
+    const valuesPost = {
       ...values,
       tags: values.tags?.split(",").map((tag) => tag.trim()),
     };
-    console.log(values, 1);
-    api.addPost(values).then((newData) => {
+    api.addPost(valuesPost).then((newData) => {
       const newPost = [newData].concat(posts);
       setPosts(newPost);
     });
-    // [...prevState, newData]
 
     setShowModal(false);
   };
@@ -73,8 +74,6 @@ function App() {
 
   const handleInput = (inputValue) => {
     setSearchQuery(inputValue);
-    // console.log("input", inputValue);
-
   };
 
   function handlePostLike(postCards) {
@@ -84,8 +83,16 @@ function App() {
       const newPostsState = posts.map((postState) => {
         return postState._id === newPost._id ? newPost : postState;
       });
+
+      if (!isLiked) {
+        setFavorites((prevState) => [newPost, ...prevState]);
+      } else
+        setFavorites((prevState) =>
+          prevState.filter((post) => post._id !== newPost._id)
+        );
+
       setPosts(newPostsState);
-      console.log(newPostsState, 3);
+
     });
   }
 
@@ -97,81 +104,75 @@ function App() {
     }).catch((err) => console.log(err));
   }
 
+  const valueProvider = {
+    posts,
+    setPosts,
+    favorites,
+    handlePostLike: handlePostLike,
+    handlePostDelete: handlePostDelete,
+  };
+
   return (
-    <UserContext.Provider value={currentUser}>
-    <Layout>
+    <CardContext.Provider value={valueProvider}>
+      <UserContext.Provider value={{ currentUser, setCurrentUser }}>
+        <Layout>
+          <HeaderTitle {...currentUser} />
+          <Content style={{ padding: "0 100px" }}>
 
-      <HeaderTitle {...currentUser} />
-
-      <Content style={{ padding: "0 100px" }}>
-        <Routes>
-          <Route
-            path='/'
-            element={
-              <>
-                <BreadcrumbPost  >
-                
-                <Search onSubmit={handleFormSubmit} onInput={handleInput} />
-                
-                </BreadcrumbPost>
-
-                <CreatePostButton
-                  handleCreatePost={handleCreatePost}
-                  showModal={showModal}
-                  setShowModal={setShowModal} />
-              {/* </>
-            } />
-
-          </Routes>
-
-          <Routes> */}
-{/* 
-          <Route
-            path="/"
-            element={
-              <> */}
-                <Space
-                  direction="vertical"
-                  size="middle"
-                  style={{
-
-                  }}>
-
-                  <PostListPage goods={posts}
-                    currentUser={currentUser}
-                    handlePostLike={handlePostLike}
-                    handlePostDelete={handlePostDelete} />
-
-                  <PaginationPost />
-
-                </Space>
-              </>
-            }
-            
-          />
-
-          <Route
+            <BreadcrumbPost  >
+              <Search onSubmit={handleFormSubmit} onInput={handleInput} />
+            </BreadcrumbPost>
+            <Routes>
+              <Route
+                path='/'
+                element={
+                  <>
+                    <CreatePostButton
+                      handleCreatePost={handleCreatePost}
+                      showModal={showModal}
+                      setShowModal={setShowModal} />
+                    <Space
+                      direction="vertical"
+                      size="middle"
+                      style={{
+                      }}>
+                      <PostListPage goods={posts}
+                        currentUser={currentUser}
+                        handlePostLike={handlePostLike}
+                        handlePostDelete={handlePostDelete}
+                        setPosts={setPosts}
+                      />
+                      <PaginationPost
+                        totalQuery={totalQuery}
+                        page={page}
+                        pageLimit={pageLimit}
+                        setPage={setPage}
+                        setPageLimit={setPageLimit} />
+                    </Space>
+                  </>
+                }
+              />
+              <Route
                 path='/posts/:postID'
-                element={<PostCardPages 
-                handlePostLike={handlePostLike}
-                currentUser = {currentUser}
-                setCurrentUser = {setCurrentUser}/>}
+                element={<PostCardPages
+                  posts={posts}
+                  handlePostLike={handlePostLike}
+                />}
               ></Route>
-          <Route
-            path="*"
-            element={<NotFoundPage style={{ textAlign: "center" }} />}
-          />
-        </Routes>
-      </Content>
+              <Route path='/favorites' element={<Favorite />}></Route>
+              <Route
+                path="*"
+                element={<NotFoundPage style={{ textAlign: "center" }} />}
+              />
+            </Routes>
+          </Content>
+          <Footer style={{ padding: "12px 50px", }}>
 
-
-
-      <Footer style={{ padding: "12px 50px", }}>
-
-        <FooterPage />
-      </Footer>
-    </Layout>
-    </UserContext.Provider>
+            <FooterPage />
+          </Footer>
+        </Layout>
+      </UserContext.Provider>
+    </CardContext.Provider>
 
   );
 }

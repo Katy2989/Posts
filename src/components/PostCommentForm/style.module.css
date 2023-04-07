@@ -1,0 +1,17 @@
+.text {
+    margin: 16px 0 20px 0;
+    color: #1a1a1a;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 10px;
+  }
+
+  .review__author{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    font-weight: 700;
+    font-size: 15px;
+    line-height: 20px;
+    color: #1a1a1a;
+  }
