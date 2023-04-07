@@ -22,6 +22,12 @@ class Api {
     }).then(onResponse);
   }
 
+  getUser() {
+    return fetch(`${this._baseUrl}/users`, {
+      headers: { authorization: this._token },
+    }).then(onResponse);
+  }
+
   search(searchQuery, page, limit) {
     return fetch(`${this._baseUrl}/posts/paginate?page=${page}&limit=${limit}&query=${searchQuery}`,
       {
@@ -29,7 +35,7 @@ class Api {
       }).then(onResponse);
   }
 
-  changeLogin(avatar) { 
+  changeAvatar(avatar) { 
     console.log(avatar, "avatar");  
     return fetch(`${this._baseUrl}/users/me/avatar`, {
       method: "PATCH",
@@ -40,6 +46,18 @@ class Api {
      body: JSON.stringify(avatar),
     }).then(onResponse);
   }
+
+  changeName (body) {
+    return fetch(`${this._baseUrl}/users/me`, {
+      method: "PATCH",
+      headers: {
+        authorization: this._token,
+        "Content-type": "application/json",
+      },
+     body: JSON.stringify(body),
+    }).then(onResponse);
+  }
+  
   deletePost(postId) {
     return fetch(`${this._baseUrl}/posts/${postId}`, {
       method: "DELETE",
@@ -76,6 +94,17 @@ class Api {
       headers: {
         authorization: this._token,
       },
+    }).then(onResponse);
+  }
+
+  editPostById(postID, values) {   
+    return fetch(`${this._baseUrl}/posts/${postID}`, {
+      method: "PATCH",
+      headers: {
+        authorization: this._token,
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify(values),
     }).then(onResponse);
   }
 

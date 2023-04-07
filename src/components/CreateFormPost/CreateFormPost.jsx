@@ -56,12 +56,12 @@ export const CreateFormPost = ({ showModal, handleCreatePost, setShowModal }) =>
             <Input.TextArea placeholder="введите описание поста" />
           </Form.Item>
           <Form.Item
-            label="Url"
+            label="Url картинки"
             name="image"
             rules={[
               {
                 required: true,
-                message: "Please input the link to the image of your post",
+                message: "введите ссылку на картинку поста",
               },
               { type: "url", warningOnly: true },
               { type: "string", min: 6 },

@@ -1,14 +1,10 @@
 import React from "react";
 import { Button, Result } from 'antd';
  import { useNavigate } from 'react-router-dom';
-// import { NotFound } from "../../components/NotFound/NotFound";
-
 
 
 export const NotFoundPage = () => {
 
-
-    // return <div>Не туда попали</div>;
    const navigate = useNavigate();
 
      return (

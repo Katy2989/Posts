@@ -1,7 +1,5 @@
 import React from 'react';
 import s from "./style.module.css";
-import { LaptopOutlined, NotificationOutlined, UserOutlined } from '@ant-design/icons';
-
 
 const footerStyle = {
   textAlign: 'center',

@@ -2,10 +2,9 @@ import React, { useContext } from "react";
 import { Modal, Form, Input, Image, Select } from "antd";
 import { UserContext } from "../../Untils/UserContext/userContext";
 
-export const ChangeLoginForm = ({ visible, onChangeLogin, onCancel, image }) => {
+export const ChangeName = ({ visible, onChangeName, onCancel, name, about }) => {
   const [form] = Form.useForm();
-   const currentUser = useContext(UserContext);
-  //  console.log(currentUser.avatar, "jjkbhjvhj");
+
   return (
     <Modal
       open={visible}
@@ -18,7 +17,7 @@ export const ChangeLoginForm = ({ visible, onChangeLogin, onCancel, image }) => 
           .validateFields()
           .then((values) => {
             form.resetFields();
-            onChangeLogin(values);
+            onChangeName(values);
           })
           .catch((info) => {
             console.log("Validate Failed:", info);
@@ -34,57 +33,35 @@ export const ChangeLoginForm = ({ visible, onChangeLogin, onCancel, image }) => 
         }}
       >
         <Form.Item
-          name="avatar"
-          label="Avatar"
-          rules={[
-            {
-              required: true,
-              message: "Please input the link to your new Avatar",
-            },
-            { type: "url", warningOnly: true },
-            { type: "string", min: 6 },
-          ]}
-        >
-         
-          <Input
-          placeholder = "jhnjkbjbhj"> 
-          </Input>
-
-        </Form.Item>
-        <Image
-     width={200}
-    style={{ margin:"10px 120px"
-    }}
-    
-    src={image}
-  />
-        <Form.Item
           name="name"
           label="Name"
           rules={[
             {
-              
-              message: "Please input your new name",
+              message: "Пожалуйста введите имя",
             },
-            { type: "string", min: 5 },
+              { type: "string", min: 2 },
           ]}
         >
-          <Input />
-          
+
+          <Input
+            placeholder={name}>
+          </Input>
+
         </Form.Item>
         <Form.Item
           name="about"
           label="About"
           rules={[
             {
-              
-              message: "Please input about",
+              message: "Пожалуйста введите о себе",
             },
-            { type: "string", min: 5 },
+              { type: "string", min: 2 },
           ]}
         >
-          <Input />
-          
+          <Input
+            placeholder={about}>
+          </Input>
+
         </Form.Item>
       </Form>
     </Modal>

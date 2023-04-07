@@ -1,41 +1,26 @@
+import previousTuesday from 'date-fns/previousTuesday';
 import React, { useState } from 'react';
 import { useCallback } from 'react';
-// import { useContext } from 'react';
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-
-// import Header from '../../components/Header/header';
-// import Logo from '../../components/Logo/logo';
 import { PostPages } from '../../components/PostPages/PostPages';
-// import { Product } from '../../components/Product/product';
-// import Search from '../../components/Search/search';
 import Spinner from '../../components/Spinner/spinner';
 import api from '../../Untils/api';
 
-// import { UserContext } from '../../context/userContext';
+export const PostCardPages = ({ handlePostLike}) => {
 
+  const [isLoading, setIsLoading] = useState(false);
+  const [post, setPost] = useState([]);
+  const { postID } = useParams();
 
-export const PostCardPages = ({ handlePostLike, setCurrentUser, currentUser }) => {
-
-    const [isLoading, setIsLoading] = useState(false);
-    const [posts, setPosts] = useState([]);
-//   const { handleProductLike } = useContext(UserContext);
-
-   const { postID } = useParams();
-
-   console.log(postID);
-   
   useEffect(() => {
-      setIsLoading(true);
-      
+    setIsLoading(true);
     api
       .getPostById(postID)
-      .then((postData) => setPosts(postData))
+      .then((postData) => setPost(postData))
       .catch((err) => console.log('err', err))
       .finally(() => setIsLoading(false));
   }, [postID]);
-
-
 
   return (
     <>
@@ -44,9 +29,7 @@ export const PostCardPages = ({ handlePostLike, setCurrentUser, currentUser }) =
           <Spinner />
         ) : (
           <PostPages
-            // posts = {posts}
-             {...posts}
-            // currentUser={currentUser}
+            {...post}
             onPostLike={handlePostLike}
           />
         )}
